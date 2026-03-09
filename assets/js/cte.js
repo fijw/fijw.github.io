@@ -1,79 +1,54 @@
-/* 
-Click to enter CSS file
+/*
+Click to enter JavaScript
 */
 
-.unclicked {
-  filter: blur(4px);
-  /* z-index: 100; */
-}
+var CTE = {};
 
-.overlay {
+// The call back for when its finished
+CTE.callback = null;
 
-  width: 100%;
-  height: 100vh;
+// The actual particles.js canvas it uses
+CTE.container = document.getElementById("content-container");
+CTE.container.style.opacity = 0;
+CTE.canvas = document.getElementsByTagName("canvas")[0];
+CTE.canvas.classList.add("unclicked");
+
+// Make the elements
+CTE.text = document.createElement("div");
+CTE.text.className = "overlaytext";
+CTE.text.id = "CTEText";
+CTE.text.innerText = "click to enter";
+
+// Add the overlay to the actual site
+document.body.insertBefore(CTE.text, document.body.children[0]);
+// document.body.insertBefore(CTE.div, document.body.children[0]);
+
+// The function that will be execute upon click of the div or text
+CTE.clicked = () => {
+  if (CTE.canvas.className.includes("click") && !CTE.canvas.className.includes("unclicked"))
+    return;
+
+  // Fade off the blur
+  CTE.canvas.classList.remove("unclicked");
+  CTE.canvas.classList.add("click");
+  CTE.text.classList.add("fadeOut");
   
-  opacity: 0;
+  // Fixing styling after
+  setTimeout(() => {
+    CTE.canvas.classList.add("clicked");
+    CTE.text.remove();
+    CTE.container.classList.add("fadeIn");
+
+    // Fade in styling fix
+    setTimeout(() => {
+      CTE.container.style.opacity = 1;
+      
+      if (CTE.callback && typeof(CTE.callback) == "function")
+        CTE.callback();
+    }, 1000);
+  }, 1000);
 }
 
-.overlaytext {
-  text-align: center;
-  
-  position: absolute;
-  z-index: 2;
-
-  background-color: black;
-  color: white;
-  
-  left: 50%;
-  top: 50%;
-
-  transform: translate(-50%, -50%);
-}
-
-.click {
-  animation: clickedAnim 1s;
-}
-
-.clicked {
-  filter: 0;
-}
-
-.fadeIn {
-  animation: fadeInAnim 1s;
-}
-
-.fadeOut {
-  animation: fadeOutAnim 1s;
-}
-
-@keyframes fadeInAnim
-{
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOutAnim
-{
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes clickedAnim
-{
-  from {
-    filter: blur(4px);
-    -webkit-filter: blur(4px);
-  }
-  to {
-    filter: blur(0px);
-    -webkit-filter: blur(0px);
-  }
-}
+// Events
+CTE.canvas.onclick = CTE.clicked;
+// CTE.text.onclick = CTE.clicked;
